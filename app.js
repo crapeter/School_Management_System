@@ -5,7 +5,7 @@ const Student = require('./models/students');
 
 const app = express();
 
-const dbURI = 'mongodb+srv://crapeter:MongoDB0422%21@cluster0.pb7fxj4.mongodb.net/Students?retryWrites=true&w=majority';
+const dbURI = 'mongodb+srv://Username:Password@cluster0.pb7fxj4.mongodb.net/Students?retryWrites=true&w=majority';
 mongoose.connect(dbURI)
     .then(() => app.listen(3001))
     .catch((err) => console.error(err));
