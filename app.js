@@ -193,7 +193,7 @@ async function getGrades(schedule) {
     if (isNaN(grade)) {
       console.log('Invalid grade');
     } else if (index < schedule.length && index !== schedule.length - 1) {
-      updatedGrades.push(classGrade);
+      updatedGrades.push(grade);
       index++;
     } else break;
   }
