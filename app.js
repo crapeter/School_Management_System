@@ -22,68 +22,60 @@ function userInput() {
   input.question('What would you like to do: \n1) Add a student (name and id)\n2) Create/edit a students schedule\n' + 
                  '3) Edit a students grades \n4) Get a students information \n5) Remove a student from the system\n6) Exit\n', (operation) => {
     switch (operation) {
-      case '1':
-        // creates a new students profile
-        async function crtSTD() {
-          await setStudentName();
-          await setStudentID();
-          createStudent(studentName, studentID);
-        }
-        crtSTD();
-        userInput();
-        break;
-      case '2': 
-        // creates and edits a students schedule
-        async function schedule() {
-          await setSchedule()
-            .then(() => console.log('Schedule updated\n'))
-            .catch(err => console.log(err));
-          userInput();
-        }
-        schedule();
-        break;
-      case '3': 
-        // edits student grades
-        async function grades() {
-          await setGrades()
-            .then(() => console.log('Grades updated\n'))
-            .catch(err => console.log(err));
-          userInput();
-        }
-        grades();
-        break;
-      case '4': 
-        // get a students information
-        async function info() {
-          await studentInfo()
-            .catch(err => console.log(err));
-          userInput();
-        }
-        info();
-        break;
-      case '5':
-        // removes a student from the system
-        async function remove() {
-          await removeStudent()
-            .then(() => console.log('Student successfully removed from the system\n'))
-            .catch(err => console.log(err));
-          userInput();
-        }
-        remove();
-        break;
-      case '6': 
-        // exits the program
-        process.exit();
-      default: {
-        console.log('Invalid operation');
-        userInput();
-      }
+		case '1':
+			async function crtSTD() {
+        await setStudentName();
+        await setStudentID();
+        createStudent(studentName, studentID);
+			}
+			crtSTD();
+			userInput();
+			break;
+		case '2': 
+			async function schedule() {
+				await setSchedule()
+					.then(() => console.log('Schedule updated\n'))
+					.catch(err => console.log(err));
+				userInput();
+			}
+			schedule();
+			break;
+		case '3': 
+			async function grades() {
+				await setGrades()
+					.then(() => console.log('Grades updated\n'))
+					.catch(err => console.log(err));
+				userInput();
+			}
+			grades();
+			break;
+		case '4': 
+			async function info() {
+				await studentInfo()
+					.catch(err => console.log(err));
+				userInput();
+			}
+			info();
+			break;
+		case '5':
+			async function remove() {
+				await removeStudent()
+					.catch(err => console.log(err));
+				userInput();
+			}
+			remove();
+			break;
+		case '6': 
+			process.exit();
+		default: 
+			console.log('Invalid operation');
+			userInput();
     }
   });
 }
 
 function setStudentName() {
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve) => {
     input.question('Enter the name of the student: ', (name) => {
       if (isNaN(name)) {
         studentName = name;
@@ -95,9 +87,8 @@ function setStudentName() {
     })
   });
 }
-
 function setStudentID() {
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve) => {
     input.question('Enter the students id: ', (id) => {
       Student.findOne({ StudentId: id })
       .then(student => {
@@ -112,119 +103,101 @@ function setStudentID() {
     })
   });
 }
-
-function setSchedule() {
-  return new Promise((resolve, reject) => {
-    input.question('Enter the students ID: ', (id) => {
-      Student.findOne({ StudentId: id })
-      .then(student => {
-        if (!student) {
-          console.log('No student found with this ID\n');
-          userInput();
-        } else {
-          let newSchedule = [];
-          function setSchedule() {
-            input.question('Enter a class name or \'q\' to quit: ', (className) => {
-              if (!isNaN(className)) {
-                console.log('Invalid class name')
-                setSchedule();
-              } else if (className !== 'q') {
-                newSchedule.push(className);
-                setSchedule();
-              } else {
-                student.Schedule = newSchedule;
-                student.save()
-                  .catch(err => console.log(err));
-                resolve();
-              }
-            })
-          }
-          setSchedule();
-        }
-      })
-      .catch(err => console.log(err));
-    });
-  });
+async function setSchedule() {
+  const id = await getInput('Enter the studends ID: ');
+  try {
+    const student = await Student.findOne({ StudentId: id });
+    if (!student) {
+      console.log('No student found with this ID');
+      return setSchedule();
+    }
+    const newSchedule = await getSchedule();
+    student.Schedule = newSchedule;
+    await student.save();
+  } catch (err) {
+    console.log(err);
+  }
+}
+async function setGrades() {
+  const id = await getInput('Enter the student ID: ');
+  try {
+    const student = await Student.findOne({StudentId: id});
+    if (!student) {
+      console.log('No student found with this ID');
+      return setGrades();
+    }
+    const updatedGrades = await getGrades(student.Schedule);
+    student.Grades = updatedGrades;
+    await student.save();
+  } catch (err) {
+    console.log(err);
+  }
 }
 
-function setGrades() {
-  return new Promise((resolve, reject) => {
-    input.question('Enter the students ID: ', (id) => {
-      Student.findOne({ StudentId: id })
-      .then(student => {
-        if (!student) {
-          console.log('No student found with this ID\n');
-          userInput();
-        } else {
-          const schedule = student.Schedule;
-          let newGrades = [];
-          let index = 0;
-          if (schedule[0] !== undefined) {
-            function setSchedule() {
-              input.question(`Enter the grade for ${schedule[index]}: `, (classGrade) => {
-                if (isNaN(classGrade)) {
-                  setSchedule();
-                } else if (index < schedule.length) {
-                  newGrades.push(classGrade);
-                  if (index !== schedule.length - 1) {
-                    index++;
-                    setSchedule();
-                  } else {
-                    student.Grades = newGrades;
-                    student.save()
-                        .catch(err => console.log(err));
-                    resolve();
-                  }
-                } 
-              })
-            }
-            setSchedule();
-          } else {
-            console.log("This student does not have a schedule\n");
-            userInput();
-          }
-        }
-      })
-      .catch(err => console.log(err));
-    });
-  });
+async function studentInfo() {
+  const id = await getInput('Enter the student ID: ');
+  try {
+    const student = await Student.findOne({ StudentId: id });
+    if (!student) {
+      console.log('No student found with this ID\n');
+    } else {
+      console.log(`Name: ${student.Name}`);
+      console.log(`Student ID: ${student.StudentId}`);
+      console.log(`Schedule: ${student.Schedule}`);
+      console.log(`Grades: ${student.Grades}\n`);
+    }
+  } catch (err) {
+    console.log(err);
+  }
+}
+async function removeStudent() {
+  const id = await getInput('Enter the student ID: ');
+  try {
+    const student = await Student.findOneAndDelete({ StudentId: id });
+    if (!student) {
+      console.log('No student found with this ID\n');
+    } else {
+      console.log(`${student.Name} has been removed from the system\n`); 
+    }
+  } catch (err) {
+    console.log(err);
+  }
 }
 
-function studentInfo() {
-  return new Promise((resolve, reject) => {
-    input.question('Enter the students ID: ', (id) => {
-      Student.findOne({ StudentId: id })
-      .then(student => {
-        if (!student) {
-          console.log('No student found with this ID\n');
-          userInput();
-        } else {
-          console.log(`Name: ${student.Name}`);
-          console.log(`Student ID: ${student.StudentId}`);
-          console.log(`Schedule: ${student.Schedule}`);
-          console.log(`Grades: ${student.Grades}\n`);
-          resolve();
-        }
-      })
-      .catch(err => console.log(err));
-    });
-  });
+function getInput(question) {
+  return new Promise((resolve) => {
+    input.question(question, (answer) => {
+      resolve(answer);
+    })
+  })
 }
-
-function removeStudent() {
-  return new Promise((resolve, reject) => {
-    input.question('Enter the students ID: ', (id) => {
-      Student.findOneAndDelete({ StudentId: id }).then(result => {
-      if (result) {
-        resolve();
-      } else {
-        console.log('No student found with this ID\n');
-        userInput();
-      }
-      })
-      .catch(err => console.log(err));
-    });
-  });
+async function getSchedule() {
+  const newSchedule = [];
+  while (true) {
+    const className = await getInput('Enter a class name or \'q\' to quit: ');
+    if (!isNaN(className)) {
+      console.log('Invalid class name');
+    } else if (className !== 'q') {
+      newSchedule.push(className);
+    } else {
+      break;
+    }
+  }
+  return newSchedule;
+}
+async function getGrades(schedule) {
+  const updatedGrades = [];
+  let index = 0;
+  while (index < schedule.length) {
+    const grade = await getInput(`Enter the grade for ${schedule[index]}: `);
+    if (isNaN(grade)) {
+      console.log('Invalid grade');
+    } else if (index < schedule.length && index !== schedule.length - 1) {
+      updatedGrades.push(classGrade);
+      index++;
+    } else break;
+  }
+  return updatedGrades;
 }
 
 function createStudent(Name, StudentId) {
