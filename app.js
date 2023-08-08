@@ -22,54 +22,54 @@ function userInput() {
   input.question('What would you like to do: \n1) Add a student (name and id)\n2) Create/edit a students schedule\n' + 
                  '3) Edit a students grades \n4) Get a students information \n5) Remove a student from the system\n6) Exit\n', (operation) => {
     switch (operation) {
-		case '1':
-			async function crtSTD() {
-        await setStudentName();
-        await setStudentID();
-        createStudent(studentName, studentID);
-			}
-			crtSTD();
-			userInput();
-			break;
-		case '2': 
-			async function schedule() {
-				await setSchedule()
-					.then(() => console.log('Schedule updated\n'))
-					.catch(err => console.log(err));
-				userInput();
-			}
-			schedule();
-			break;
-		case '3': 
-			async function grades() {
-				await setGrades()
-					.then(() => console.log('Grades updated\n'))
-					.catch(err => console.log(err));
-				userInput();
-			}
-			grades();
-			break;
-		case '4': 
-			async function info() {
-				await studentInfo()
-					.catch(err => console.log(err));
-				userInput();
-			}
-			info();
-			break;
-		case '5':
-			async function remove() {
-				await removeStudent()
-					.catch(err => console.log(err));
-				userInput();
-			}
-			remove();
-			break;
-		case '6': 
-			process.exit();
-		default: 
-			console.log('Invalid operation');
-			userInput();
+	case '1':
+	  async function crtSTD() {
+	    await setStudentName();
+	    await setStudentID();
+	    createStudent(studentName, studentID);
+	  }
+	  crtSTD();
+	  userInput();
+	  break;
+	case '2': 
+	  async function schedule() {
+	  await setSchedule()
+	    .then(() => console.log('Schedule updated\n'))
+	    .catch(err => console.log(err));
+	    userInput();
+	  }
+	  schedule();
+	  break;
+	case '3': 
+	  async function grades() {
+	  await setGrades()
+	    .then(() => console.log('Grades updated\n'))
+	    .catch(err => console.log(err));
+	    userInput();
+	  }
+	  grades();
+	  break;
+	case '4': 
+	  async function info() {
+	  await studentInfo()
+	    .catch(err => console.log(err));
+	    userInput();
+	  }
+	  info();
+	  break;
+	case '5':
+	  async function remove() {
+	    await removeStudent()
+	    .catch(err => console.log(err));
+	    userInput();
+	  }
+	  remove();
+	  break;
+	case '6': 
+	  process.exit();
+	default: 
+	  console.log('Invalid operation');
+	  userInput();
     }
   });
 }
