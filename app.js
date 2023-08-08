@@ -74,34 +74,32 @@ function userInput() {
   });
 }
 
-function setStudentName() {
-  return new Promise((resolve) => {
-    input.question('Enter the name of the student: ', (name) => {
-      if (isNaN(name)) {
-        studentName = name;
-        resolve();
-      } else {
-        console.log('Invalid name')
-        resolve(setStudentName());
-      }
-    })
-  });
+async function setStudentName() {
+  const name = await getInput('Enter the name of the student: ');
+  try {
+    if (isNaN(name)) {
+      studentName = name;
+    } else {
+      console.log('Invalid name')
+      return setStudentName();
+    }
+  } catch (err) {
+    console.log(err);
+  }
 }
-function setStudentID() {
-  return new Promise((resolve) => {
-    input.question('Enter the students id: ', (id) => {
-      Student.findOne({ StudentId: id })
-      .then(student => {
-        if (student){
-          console.log('Student id already exists');
-          resolve(setStudentID());
-        } else {
-          studentID = id;
-          resolve();
-        }
-      })
-    })
-  });
+async function setStudentID() {
+  const id = await getInput('Enter the studends ID: ');
+  try {
+    const student = await Student.findOne({ StudentId: id });
+    if (student) {
+      console.log('Student id already exits');
+      return setStudentID();
+    } else {
+      studentID = id;
+    }
+  } catch (err) {
+    console.log(err);
+  }
 }
 async function setSchedule() {
   const id = await getInput('Enter the studends ID: ');
