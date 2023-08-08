@@ -8,7 +8,7 @@ const app = express();
 let studentName;
 let studentID;
 
-const dbURI = 'mongodb+srv://Username:Password@cluster0.pb7fxj4.mongodb.net/Students?retryWrites=true&w=majority';
+const dbURI = 'mongodb+srv://crapeter:MongoDB0422%21@cluster0.pb7fxj4.mongodb.net/Students?retryWrites=true&w=majority';
 mongoose.connect(dbURI)
     .then(() => app.listen(3001))
     .catch((err) => console.error(err));
@@ -192,7 +192,7 @@ async function getGrades(schedule) {
     const grade = await getInput(`Enter the grade for ${schedule[index]}: `);
     if (isNaN(grade)) {
       console.log('Invalid grade');
-    } else if (index < schedule.length && index !== schedule.length - 1) {
+    } else if (index < schedule.length) {
       updatedGrades.push(grade);
       index++;
     } else break;
