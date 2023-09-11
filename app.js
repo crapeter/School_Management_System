@@ -8,7 +8,7 @@ const app = express();
 let studentName;
 let studentID;
 
-const dbURI = 'mongodb+srv://crapeter:MongoDB0422%21@cluster0.pb7fxj4.mongodb.net/Students?retryWrites=true&w=majority';
+const dbURI = 'mongodb+srv://username:password@cluster0.pb7fxj4.mongodb.net/Students?retryWrites=true&w=majority';
 mongoose.connect(dbURI)
     .then(() => app.listen(3001))
     .catch((err) => console.error(err));
